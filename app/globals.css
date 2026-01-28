@@ -2,7 +2,15 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1D4370;
+  
+  /* DatabyNature Brand Colors */
+  --primary-deep: #1C4D2E;
+  --primary-bright: #44A15A;
+  --secondary-muted: #2A5298;
+  --secondary-teal: #2B8A8E;
+  --accent-gold: #E5C564;
+  --text-navy: #1D4370;
 }
 
 @theme inline {
@@ -10,6 +18,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Brand Colors */
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-bright: var(--primary-bright);
+  --color-secondary-muted: var(--secondary-muted);
+  --color-secondary-teal: var(--secondary-teal);
+  --color-accent-gold: var(--accent-gold);
+  --color-text-navy: var(--text-navy);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +38,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
