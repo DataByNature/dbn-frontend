@@ -495,8 +495,12 @@ export default function LandingPage() {
                 <ul className="space-y-4 text-gray-300">
                   <li className="hover:text-white cursor-pointer transition-colors">About</li>
                   <li className="hover:text-white cursor-pointer transition-colors">Contact</li>
-                  <li className="hover:text-white cursor-pointer transition-colors">Terms of Service</li>
-                  <li className="hover:text-white cursor-pointer transition-colors">Privacy Policy</li>
+                  <li>
+                    <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                  </li>
+                  <li>
+                    <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                  </li>
                 </ul>
               </div>
               <div>
@@ -515,8 +519,8 @@ export default function LandingPage() {
               © {new Date().getFullYear()} DatabyNature. Designed with precision.
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
-              <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Terms</span>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
               <span className="hover:text-white cursor-pointer transition-colors">Cookies</span>
             </div>
           </div>
