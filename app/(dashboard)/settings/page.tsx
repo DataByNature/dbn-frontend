@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { NotificationPreference, User } from "@/types/api";
 import { setUserInStorage } from "@/lib/auth/auth";
 import { useNotificationPreferences, useUpdateNotificationPreferences } from "@/lib/hooks/useNotificationPreferences";
+import { cn } from "@/lib/utils/cn";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
