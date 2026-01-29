@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef } from "react";
+import { HTMLAttributes, TdHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils/cn";
 
 export const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(
@@ -53,7 +53,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, HTMLAttributes<HTMLTab
 );
 TableHead.displayName = "TableHead";
 
-export const TableCell = forwardRef<HTMLTableCellElement, HTMLAttributes<HTMLTableCellElement>>(
+export const TableCell = forwardRef<HTMLTableCellElement, TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
     <td ref={ref} className={cn("px-6 py-4 whitespace-nowrap text-sm text-gray-900", className)} {...props} />
   )
