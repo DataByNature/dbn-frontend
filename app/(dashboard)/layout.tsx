@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -15,7 +15,16 @@ export default function DashboardLayout({
   const router = useRouter();
   const { data: user, isLoading, isError } = useAuth();
 
+  // Avoid hydration mismatches by deferring auth checks until after mount
+  const [hasMounted, setHasMounted] = useState(false);
+
   useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted) return;
+
     // If loading is complete and there's no token, redirect to login
     if (!isLoading && !isAuthenticated()) {
       router.push("/login");
@@ -29,7 +38,13 @@ export default function DashboardLayout({
       logout();
       router.push("/login");
     }
-  }, [isLoading, isError, user, router]);
+  }, [hasMounted, isLoading, isError, user, router]);
+
+  // On first render (SSR + initial client pass), render nothing
+  // so server and client markup match and avoid hydration errors.
+  if (!hasMounted) {
+    return null;
+  }
 
   if (isLoading) {
     return (
