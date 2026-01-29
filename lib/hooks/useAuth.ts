@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient, { normalizeResponse, extractErrorMessage } from "@/lib/api/client";
+import { getAuthToken } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { LoginRequest, LoginResponse, User } from "@/types/api";
 import { setToken, setUserInStorage, removeToken, clearUserFromStorage } from "@/lib/auth/auth";
@@ -12,6 +13,9 @@ export function useAuth() {
   return useQuery({
     queryKey: ["auth", "user"],
     queryFn: async (): Promise<User | null> => {
+      if (!getAuthToken()) {
+        return null;
+      }
       try {
         const response = await apiClient.get(API_ENDPOINTS.USER_PROFILE);
         const user = normalizeResponse<User>(response.data);
@@ -23,6 +27,7 @@ export function useAuth() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
+    enabled: typeof window !== "undefined" && !!getAuthToken(),
   });
 }
 

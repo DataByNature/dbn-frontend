@@ -39,4 +39,11 @@ export const API_ENDPOINTS = {
   CREATE_USER: "/api/v1/users/",
   UPDATE_USER: (id: string) => `/api/v1/users/${id}/`,
   SUSPEND_USER: (id: string) => `/api/v1/users/${id}/suspend/`,
+
+  // Notifications
+  NOTIFICATIONS: "/api/v1/notifications/",
+  NOTIFICATION_MARK_READ: (id: number | string) => `/api/v1/notifications/${id}/mark-read/`,
+  NOTIFICATION_MARK_ALL_READ: "/api/v1/notifications/mark-all-read/",
+  NOTIFICATION_PREFERENCES: "/api/v1/notifications/preferences/",
+  NOTIFICATION_PREFERENCES_UPDATE: "/api/v1/notifications/preferences/update/",
 } as const;

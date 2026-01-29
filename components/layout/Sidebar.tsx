@@ -67,8 +67,8 @@ export function Sidebar({ user }: SidebarProps) {
         )}
       >
         <div className="h-full flex flex-col">
-          {/* Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-gray-200">
+          {/* Logo - same height as Topbar for alignment */}
+          <div className="h-16 min-h-16 flex-shrink-0 flex items-center px-6 border-b border-gray-200">
             <h1 className="text-xl font-bold text-primary-deep">DatabyNature</h1>
           </div>
 

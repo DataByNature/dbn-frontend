@@ -139,6 +139,28 @@ export interface ApiError {
   errors?: Record<string, string[]>;
 }
 
+// Notifications
+export enum NotificationKind {
+  TRANSACTION_SUCCESS = "TRANSACTION_SUCCESS",
+  TRANSACTION_FAILED = "TRANSACTION_FAILED",
+}
+
+export interface Notification {
+  id: number;
+  kind: NotificationKind;
+  title: string;
+  message: string;
+  read_at: string | null;
+  transaction_id: string | null;
+  created_at: string;
+}
+
+export interface NotificationPreference {
+  in_app: boolean;
+  email: boolean;
+  push: boolean;
+}
+
 // API Response Wrappers
 export interface ApiResponse<T> {
   data: T;

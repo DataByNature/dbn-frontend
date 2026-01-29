@@ -1,6 +1,7 @@
 {
-  "name": "Your Website",
-  "short_name": "Website",
+  "name": "DatabyNature",
+  "short_name": "DBN",
+  "description": "Buy data, airtime, and pay bills at discounted rates",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -13,7 +14,8 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "theme_color": "#1C4D2E",
+  "background_color": "#FAFBFC",
+  "display": "standalone",
+  "start_url": "/"
 }

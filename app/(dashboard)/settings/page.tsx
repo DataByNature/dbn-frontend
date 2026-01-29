@@ -3,14 +3,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import apiClient, { extractErrorMessage } from "@/lib/api/client";
+import apiClient, { normalizeResponse, extractErrorMessage } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { NotificationPreference, User } from "@/types/api";
+import { setUserInStorage } from "@/lib/auth/auth";
+import { useNotificationPreferences, useUpdateNotificationPreferences } from "@/lib/hooks/useNotificationPreferences";
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -30,8 +34,43 @@ const passwordSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
+interface PreferenceToggleProps {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+function PreferenceToggle({ label, description, checked, onChange }: PreferenceToggleProps) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-2">
+      <div>
+        <p className="text-sm font-medium text-text-navy">{label}</p>
+        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+      </div>
+      <label className="inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          className="sr-only peer"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-primary-deep transition-colors">
+          <div className={cn(
+            "h-5 w-5 bg-white rounded-full shadow transform transition-transform",
+            checked ? "translate-x-5" : "translate-x-0"
+          )} />
+        </div>
+      </label>
+    </div>
+  );
+}
+
 export default function SettingsPage() {
+  const queryClient = useQueryClient();
   const { data: user } = useAuth();
+  const { data: notificationPrefs } = useNotificationPreferences();
+  const updateNotificationPrefs = useUpdateNotificationPreferences();
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -43,11 +82,21 @@ export default function SettingsPage() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
+      name: "",
+      email: "",
+      phone: "",
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      resetProfile({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user, resetProfile]);
 
   const {
     register: registerPassword,
@@ -61,7 +110,10 @@ export default function SettingsPage() {
   const onSubmitProfile = async (data: ProfileFormData) => {
     setIsUpdatingProfile(true);
     try {
-      await apiClient.patch(API_ENDPOINTS.UPDATE_PROFILE, data);
+      const response = await apiClient.patch(API_ENDPOINTS.UPDATE_PROFILE, data);
+      const updatedUser = normalizeResponse<User>(response.data);
+      setUserInStorage(updatedUser);
+      queryClient.setQueryData(["auth", "user"], updatedUser);
       toast.success("Profile updated successfully!");
       resetProfile(data);
     } catch (error: any) {
@@ -130,6 +182,41 @@ export default function SettingsPage() {
               Update Profile
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      {/* Notification Preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Notification Preferences</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <PreferenceToggle
+              label="In-app notifications"
+              description="Show transaction alerts in the dashboard."
+              checked={notificationPrefs?.in_app ?? true}
+              onChange={(checked) =>
+                updateNotificationPrefs.mutate({ in_app: checked })
+              }
+            />
+            <PreferenceToggle
+              label="Email notifications"
+              description="Send emails for important transaction events."
+              checked={notificationPrefs?.email ?? false}
+              onChange={(checked) =>
+                updateNotificationPrefs.mutate({ email: checked })
+              }
+            />
+            <PreferenceToggle
+              label="Push notifications"
+              description="Enable push notifications (when available)."
+              checked={notificationPrefs?.push ?? false}
+              onChange={(checked) =>
+                updateNotificationPrefs.mutate({ push: checked })
+              }
+            />
+          </div>
         </CardContent>
       </Card>
 
