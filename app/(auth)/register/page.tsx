@@ -52,6 +52,7 @@ export default function RegisterPage() {
     mutationFn: async (data: RegisterFormData): Promise<RegisterResponse> => {
       const payload = {
         username: data.email,
+        name: data.name,
         phone: data.phone,
         email: data.email,
         password: data.password,
